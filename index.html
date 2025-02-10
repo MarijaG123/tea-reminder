@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tea Reminder</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        #tea-image {
+            width: 250px; /* Make the image much smaller */
+            height: auto;
+            display: block;
+            margin: 10px auto;
+        }
+        #message {
+            font-size: 18px;
+            color: #5a3e1b;
+            text-align: center;
+            margin-top: 20px;
+        }
+        #countdown {
+            font-size: 22px;
+            color: #a65d1e;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tea Reminder</h1>
+    <img src="tea.jpg" alt="A cup of tea" id="tea-image">
+    <button onclick="startTeaTimer()">Tea Ready</button>
+    <p id="message"></p>
+    <p id="countdown"></p>
+    <audio id="notification-sound" src="notification.mp3"></audio>
+
+    <script>
+        let timerInterval;
+        let endTime;
+
+        function playSound() {
+            const sound = document.getElementById('notification-sound');
+            sound.currentTime = 0;
+            sound.play();
+        }
+
+        function startTeaTimer() {
+            const now = Date.now();
+            endTime = now + 10 * 60 * 1000; // 10 minutes from now
+
+            document.getElementById('message').innerText = "Enjoy your tea now!";
+            updateCountdown(); // Call immediately to avoid delay
+            timerInterval = setInterval(updateCountdown, 1000);
+        }
+
+        function updateCountdown() {
+            const now = Date.now();
+            const timeLeft = Math.max(0, endTime - now); // Avoid negative time
+            const minutes = Math.floor(timeLeft / 60000);
+            const seconds = Math.floor((timeLeft % 60000) / 1000);
+
+            document.getElementById('countdown').innerText = `Time left: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+            if (timeLeft === 5 * 60 * 1000) {
+                playSound();
+                document.getElementById('message').innerText = "Reminder: Your tea is getting cold!";
+            }
+
+            if (timeLeft <= 0) {
+                playSound();
+                document.getElementById('message').innerText = "Warning: You will be drinking iced tea soon!";
+                clearInterval(timerInterval);
+                document.getElementById('countdown').innerText = "Time is up!";
+            }
+        }
+    </script>
+</body>
+</html>
